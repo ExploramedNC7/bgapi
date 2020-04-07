@@ -250,7 +250,7 @@ class ProcedureManager(object):
             self.set_max_procedures(6)
         with self._typeLocks[procedure_type]:
             assert procedure_type not in self._handles # Nobody else is waiting for this procedure type
-        
+
             handle = ProcedureCallHandle()
             self._handles[procedure_type] = handle
 
@@ -706,7 +706,7 @@ class BlueGigaClient(BlueGigaModule):
             time.sleep(timeout - (now - start))
             now = time.time()
         # gap_end_procedure can sometimes be delayed by incoming adv, so set minimum timeout of 10s
-        with self.procedure_call(END_PROCEDURE, max(timeout, 10)):
+        with self.procedure_call(END_PROCEDURE, max(timeout, 30)):
             self._api.ble_cmd_gap_end_procedure()
         return self.scan_responses
 
@@ -750,7 +750,7 @@ class BlueGigaClient(BlueGigaModule):
         self.procedure_complete(PROCEDURE, result=result)
         self.connections[connection].procedure_complete(PROCEDURE, result=result)
         self.connections[connection].procedure_complete(READ_ATTRIBUTE, result=result) # When the attribute read fails
-        
+
 
 class BlueGigaServer(BlueGigaModule):
     def __init__(self, port, baud=115200, timeout=0.1):
